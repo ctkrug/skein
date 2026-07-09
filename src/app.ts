@@ -69,11 +69,12 @@ export class App {
     this.state = decoded.params;
     this.framing =
       presetById(decoded.presetId ?? "") ?? presetById(DEFAULT_PRESET_ID)!;
-    // If the hash carried an explicit preset with no custom edits, keep it lit.
+    // The hash names a preset for its axis framing even after the sliders were
+    // customized, so only light the button when the values still match it —
+    // otherwise a shared custom link would masquerade as an unedited preset.
+    const named = decoded.presetId ? presetById(decoded.presetId) : undefined;
     this.activePresetId =
-      decoded.presetId && presetById(decoded.presetId)
-        ? decoded.presetId
-        : null;
+      named && matchesPreset(this.state, named) ? named.id : null;
     // A fresh load (no hash) starts on the default preset with its button lit.
     if (!location.hash) {
       this.applyPresetValues(this.framing);
@@ -465,6 +466,20 @@ export class App {
     const hash = encodeState(this.state, this.framing.id);
     history.replaceState(null, "", hash);
   }
+}
+
+/**
+ * Whether a scenario's three headline params equal a preset's canonical values,
+ * so a decoded hash that names a preset only lights it when nothing was edited.
+ * Values are compared at the hash's rounding precision (two decimals).
+ */
+function matchesPreset(state: ScenarioParams, preset: Preset): boolean {
+  const near = (a: number, b: number) => Math.abs(a - b) < 0.005;
+  return (
+    near(state.mean, preset.values.mean) &&
+    near(state.variance, preset.values.variance) &&
+    near(state.correlation, preset.values.correlation)
+  );
 }
 
 /** Plain-language description of what the correlation setting does. */
