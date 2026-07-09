@@ -114,4 +114,27 @@ describe("App interaction", () => {
       document.querySelector<HTMLInputElement>("#slider-paths")!.value,
     ).toBe("1500");
   });
+
+  it("does not light a preset whose values were customized in the hash", () => {
+    // Stock's canonical mean is 100; this shared hash carries a custom 150 while
+    // still naming the stock preset (for its axis framing). The button must not
+    // read as active, or a shared custom link looks like an unedited preset.
+    document.body.innerHTML = '<div id="app"></div>';
+    location.hash = "#m=150&v=160&c=0.35&n=2000&p=stock";
+    new App(document.getElementById("app")!);
+    const stock = [
+      ...document.querySelectorAll<HTMLButtonElement>(".preset"),
+    ].find((b) => b.textContent === "Volatile stock")!;
+    expect(stock.classList.contains("preset--active")).toBe(false);
+  });
+
+  it("lights the preset when the hash values match it exactly", () => {
+    document.body.innerHTML = '<div id="app"></div>';
+    location.hash = "#m=100&v=160&c=0.35&n=2000&p=stock";
+    new App(document.getElementById("app")!);
+    const stock = [
+      ...document.querySelectorAll<HTMLButtonElement>(".preset"),
+    ].find((b) => b.textContent === "Volatile stock")!;
+    expect(stock.classList.contains("preset--active")).toBe(true);
+  });
 });
