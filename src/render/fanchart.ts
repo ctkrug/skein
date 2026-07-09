@@ -19,6 +19,12 @@ export interface RenderOptions {
   reveal?: number;
   /** Opacity multiplier for the filled bands, for the recompute pulse. */
   bandAlpha?: number;
+  /**
+   * Explicit value→pixel domain. When set, the frame stays fixed instead of
+   * auto-hugging the data, so raising variance opens the cone rather than
+   * rescaling the whole view. Omit to fall back to a data-fitted domain.
+   */
+  domain?: Domain;
 }
 
 /**
@@ -94,7 +100,7 @@ export class FanChart {
     if (paths.length === 0 || this.cssWidth === 0) return;
 
     const steps = paths[0].length;
-    const domain = domainOf(bands.rows.length ? bands.rows : paths);
+    const domain = opts.domain ?? domainOf(bands.rows.length ? bands.rows : paths);
     const x = xMap(steps, this.cssWidth);
     const y = yMap(domain, this.cssHeight);
     const lastStep = Math.max(1, Math.floor((steps - 1) * clamp01(reveal)));

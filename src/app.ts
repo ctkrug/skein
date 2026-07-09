@@ -1,6 +1,12 @@
 import { simulate, percentileBands, type PathSet } from "./sim/simulate";
 import { FanChart, type BandSet } from "./render/fanchart";
 import {
+  centeredDomain,
+  frameHalfHeight,
+  outerDeviation,
+  type Domain,
+} from "./render/scales";
+import {
   SLIDERS,
   clampSlider,
   toSimParams,
@@ -17,6 +23,8 @@ import { el, prefersReducedMotion, easeOutCubic } from "./dom";
 /** The five fan-chart percentiles, outer to inner. */
 const PERCENTILES = [0.05, 0.25, 0.5, 0.75, 0.95];
 const SWEEP_MS = 650;
+/** Upper bound of the variance slider — the frame is sized to this spread. */
+const MAX_VARIANCE = SLIDERS.find((s) => s.key === "variance")!.max;
 
 interface SliderControl {
   spec: SliderSpec;
@@ -318,20 +326,35 @@ export class App {
     else this.drawFull();
   }
 
+  /**
+   * The stable value→pixel frame for the current scenario: centered on the mean
+   * and sized to the spread at max variance, so dragging variance opens/closes
+   * the cone instead of rescaling the whole view.
+   */
+  private currentDomain(): Domain {
+    const devRef = outerDeviation(this.bands.rows, this.state.mean);
+    const half = frameHalfHeight(devRef, this.state.variance, MAX_VARIANCE);
+    return centeredDomain(this.state.mean, half);
+  }
+
   private drawFull(): void {
     cancelAnimationFrame(this.sweepRaf);
     this.sweepRaf = 0;
-    this.chart.render(this.paths, this.bands);
+    this.chart.render(this.paths, this.bands, { domain: this.currentDomain() });
     this.updateReadout();
   }
 
   private animateSweep(): void {
     cancelAnimationFrame(this.sweepRaf);
+    const domain = this.currentDomain();
     let start = 0;
     const step = (ts: number) => {
       if (!start) start = ts;
       const t = Math.min(1, (ts - start) / SWEEP_MS);
-      this.chart.render(this.paths, this.bands, { reveal: easeOutCubic(t) });
+      this.chart.render(this.paths, this.bands, {
+        reveal: easeOutCubic(t),
+        domain,
+      });
       if (t < 1) this.sweepRaf = requestAnimationFrame(step);
       else this.sweepRaf = 0;
     };
