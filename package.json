@@ -4,6 +4,9 @@
   "private": true,
   "description": "A domain-agnostic Monte Carlo sandbox: drag sliders for mean, variance, and correlation and watch a live fan chart of thousands of simulated paths.",
   "type": "module",
+  "engines": {
+    "node": "^20.0.0 || >=22.0.0"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
