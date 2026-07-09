@@ -44,4 +44,12 @@ describe("url round-trip", () => {
     expect(decodeState("#m=50").params.mean).toBe(50);
     expect(decodeState("m=50").params.mean).toBe(50);
   });
+
+  it("rounds a fractional path count to a whole number", () => {
+    // Paths is a count; a hand-edited `n=137.5` must not flow through as a float
+    // (the simulator floors defensively, but the boundary should be clean too).
+    const { params } = decodeState("#n=137.5");
+    expect(Number.isInteger(params.paths)).toBe(true);
+    expect(params.paths).toBe(138);
+  });
 });

@@ -48,7 +48,8 @@ export function decodeState(hash: string): DecodedState {
     mean: num(q.get("m"), DEFAULT_PARAMS.mean, "mean"),
     variance: num(q.get("v"), DEFAULT_PARAMS.variance, "variance"),
     correlation: num(q.get("c"), DEFAULT_PARAMS.correlation, "correlation"),
-    paths: num(q.get("n"), DEFAULT_PARAMS.paths, "paths"),
+    // Paths is a count, so keep it whole even from a hand-edited hash.
+    paths: Math.round(num(q.get("n"), DEFAULT_PARAMS.paths, "paths")),
     seed: DEFAULT_PARAMS.seed,
   };
   return { params, presetId: q.get("p") };
