@@ -10,24 +10,24 @@ against ink-navy text and paths. It's calm and considered where a lot of data to
 either sterile-clinical or neon-dashboard — the goal is "a statistician's Sunday feature,"
 not "a terminal" or "a trading floor."
 
-*(Chosen to sit apart from this portfolio's recent runs: Monotile and Molsnap already
+_(Chosen to sit apart from this portfolio's recent runs: Monotile and Molsnap already
 claimed blueprint/cyanotype, Oneline claimed risograph, Epicycle claimed vapor-gradient,
 Codon claimed paper-and-ink lab-notebook, and Statute Watch/Skillcheck claimed
-swiss-grid/warm-blueprint. Editorial serif on warm paper is unclaimed territory.)*
+swiss-grid/warm-blueprint. Editorial serif on warm paper is unclaimed territory.)_
 
 ## 2. Tokens
 
-| Token | Value | Use |
-|---|---|---|
-| `--bg` | `#f4ede1` | page background — warm ivory paper |
-| `--surface-1` | `#ece2d0` | card / panel surface (one step darker than bg) |
-| `--surface-2` | `#e2d5bd` | recessed surface — slider tracks, input wells |
-| `--ink` | `#241f1a` | primary text — warm near-black, not pure #000 |
-| `--ink-muted` | `#6b6153` | secondary text, captions, axis labels |
-| `--accent` | `#b3311f` | crimson — primary accent, the median path, CTAs |
-| `--accent-support` | `#2b5a63` | deep teal — support accent, the outer percentile bands |
-| `--success` | `#3f7a4e` | forest green — positive/valid states |
-| `--danger` | `#b3311f` | shares the crimson accent — errors read as "attention," not a separate hue |
+| Token              | Value     | Use                                                                        |
+| ------------------ | --------- | -------------------------------------------------------------------------- |
+| `--bg`             | `#f4ede1` | page background — warm ivory paper                                         |
+| `--surface-1`      | `#ece2d0` | card / panel surface (one step darker than bg)                             |
+| `--surface-2`      | `#e2d5bd` | recessed surface — slider tracks, input wells                              |
+| `--ink`            | `#241f1a` | primary text — warm near-black, not pure #000                              |
+| `--ink-muted`      | `#6b6153` | secondary text, captions, axis labels                                      |
+| `--accent`         | `#b3311f` | crimson — primary accent, the median path, CTAs                            |
+| `--accent-support` | `#2b5a63` | deep teal — support accent, the outer percentile bands                     |
+| `--success`        | `#3f7a4e` | forest green — positive/valid states                                       |
+| `--danger`         | `#b3311f` | shares the crimson accent — errors read as "attention," not a separate hue |
 
 - **Type pairing:** `Fraunces` (display serif, variable, used for the wordmark and H1/H2)
   paired with `Inter` (UI sans, body copy, labels, numbers) — both from Google Fonts, with

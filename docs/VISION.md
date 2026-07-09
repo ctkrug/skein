@@ -9,7 +9,7 @@ and volatility"; a project-management app frames it as "optimistic/pessimistic e
 The math underneath is identical (a mean, a variance, and how much each step depends on
 the last), but you can't move that intuition between tools, and the simulation itself is
 usually hidden behind a static report — a table of percentiles, maybe one chart, rendered
-once and left there. You never get to *feel* the shape of the uncertainty change as the
+once and left there. You never get to _feel_ the shape of the uncertainty change as the
 inputs change.
 
 ## Who it's for
@@ -26,7 +26,7 @@ means today depends on yesterday."
 Three sliders — **mean**, **variance**, **correlation** — drive a Monte Carlo engine that
 sweeps thousands of simulated paths across a canvas in real time, with a fan chart (the
 5/25/50/75/95 percentile bands) overlaid on the raw paths. Nothing about the sliders or
-the renderer references a domain. A row of presets *reframes* the same three numbers
+the renderer references a domain. A row of presets _reframes_ the same three numbers
 ("optimistic PM," "streaky shooter," "volatile stock") purely as labels and starting
 values — the simulation never branches on which preset is active.
 

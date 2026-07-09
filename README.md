@@ -13,7 +13,7 @@ off a table.
 
 Most Monte Carlo tools are bolted onto a specific domain (a finance calculator, a project
 risk tracker) and hide the simulation behind a report. Scenario Loom strips the simulation
-down to its three real parameters and makes the *output itself* the interface: drag a
+down to its three real parameters and makes the _output itself_ the interface: drag a
 slider, watch the cone of outcomes respond in under a second, 2,000 paths at a time.
 
 ## The wow moment

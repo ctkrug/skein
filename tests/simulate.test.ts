@@ -72,8 +72,7 @@ describe("simulate", () => {
       const lastStep = paths.map((p) => p[p.length - 1]);
       const mean = lastStep.reduce((a, b) => a + b, 0) / lastStep.length;
       const variance_ =
-        lastStep.reduce((acc, x) => acc + (x - mean) ** 2, 0) /
-        lastStep.length;
+        lastStep.reduce((acc, x) => acc + (x - mean) ** 2, 0) / lastStep.length;
       return Math.sqrt(variance_);
     };
     expect(spreadOf(16)).toBeGreaterThan(spreadOf(1));
