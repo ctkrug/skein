@@ -321,10 +321,16 @@ export class App {
   private measureAndDraw(sweep: boolean): void {
     const w = this.frame.clientWidth;
     const h = this.frame.clientHeight;
-    if (w > 0 && h > 0) this.chart.resize(w, h);
-    if (sweep && !this.reduced) this.animateSweep();
+    const sized = w > 0 && h > 0;
+    if (sized) this.chart.resize(w, h);
+    // The intro sweep plays on the first paint that has real layout — the
+    // constructor often measures 0 before fonts/CSS settle, so defer to here.
+    const firstReveal = sized && !this.painted;
+    this.painted ||= sized;
+    if ((sweep || firstReveal) && !this.reduced && sized) this.animateSweep();
     else this.drawFull();
   }
+  private painted = false;
 
   /**
    * The stable value→pixel frame for the current scenario: centered on the mean
