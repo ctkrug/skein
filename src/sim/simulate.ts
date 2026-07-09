@@ -42,7 +42,12 @@ export type PathSet = Float64Array[];
  * domain-specific modeling.
  */
 export function simulate(params: SimParams): PathSet {
-  const { mean, variance, correlation, steps, paths, seed } = params;
+  const { mean, variance, correlation, seed } = params;
+  // Counts are floored: a fractional value (e.g. `#n=137.5` from a hand-edited
+  // hash) would otherwise reach `new Array(137.5)`, which throws "Invalid array
+  // length" and white-screens the app. Flooring degrades gracefully instead.
+  const steps = Math.floor(params.steps);
+  const paths = Math.floor(params.paths);
   if (steps < 1) throw new RangeError("steps must be >= 1");
   if (paths < 1) throw new RangeError("paths must be >= 1");
   if (variance < 0) throw new RangeError("variance must be >= 0");
