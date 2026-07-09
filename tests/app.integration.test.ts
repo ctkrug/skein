@@ -59,6 +59,14 @@ describe("App interaction", () => {
     expect(location.hash).toContain("m=150");
   });
 
+  it("lights the default preset on a fresh load", () => {
+    mount();
+    const stock = [
+      ...document.querySelectorAll<HTMLButtonElement>(".preset"),
+    ].find((b) => b.textContent === "Volatile stock")!;
+    expect(stock.classList.contains("preset--active")).toBe(true);
+  });
+
   it("marks a preset active and applies its values when clicked", () => {
     mount();
     const streak = [

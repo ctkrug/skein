@@ -74,7 +74,11 @@ export class App {
       decoded.presetId && presetById(decoded.presetId)
         ? decoded.presetId
         : null;
-    if (!location.hash) this.applyPresetValues(this.framing);
+    // A fresh load (no hash) starts on the default preset with its button lit.
+    if (!location.hash) {
+      this.applyPresetValues(this.framing);
+      this.activePresetId = this.framing.id;
+    }
 
     this.canvas = el("canvas", { class: "chart__canvas" });
     this.canvas.setAttribute("role", "img");
@@ -86,6 +90,7 @@ export class App {
 
     root.appendChild(this.buildLayout());
     this.syncInputs();
+    this.refreshPresetButtons();
     this.observeResize();
     this.resimulate();
     this.measureAndDraw(!this.reduced);
