@@ -24,17 +24,32 @@ slider, watch the cone of outcomes respond in under a second, 2,000 paths at a t
 Drag the variance slider. 2,000 simulated paths resweep the canvas in under a second, and
 the fan chart's cone visibly widens or narrows live, in sync with your hand.
 
-## Planned features
+## Features
 
-- Three core controls: mean (drift), variance (volatility), and correlation (how strongly
-  each step depends on the last).
-- A live fan chart: percentile bands (e.g. 5/25/50/75/95) rendered under thousands of raw
-  sample paths, redrawn at interactive framerates as sliders move.
-- A path-count control (drag from a few dozen paths up to several thousand) with the
-  renderer staying smooth throughout.
-- Presets that reframe the same three sliders for different domains (finance-flavored,
-  project-timeline-flavored, sports-flavored) without changing the underlying math.
-- Exportable snapshots (PNG of the current fan chart) and shareable parameter links.
+- Three core controls — mean (drift), variance (volatility), and correlation (how strongly
+  each step depends on the last) — plus a path-count slider from 50 to 5,000 paths.
+- A live fan chart: 5/25/50/75/95 percentile bands rendered under the raw sample paths on a
+  DPR-aware canvas, redrawn on every slider gesture. The y-frame stays steady so the cone
+  visibly opens and closes with variance instead of rescaling away.
+- Domain presets (volatile stock, slipping timeline, streaky shooter, coin-flip baseline)
+  that reframe the same three sliders with labels and starting values — the simulation never
+  branches on which one is active.
+- A shareable link (the scenario is encoded in the URL hash) and one-click PNG export of the
+  current chart.
+- Synth sound effects (WebAudio, no audio files) with a mute toggle that persists, a
+  staggered masthead wordmark, and a full `prefers-reduced-motion` pass.
+
+## Using it
+
+```bash
+npm install
+npm run dev      # local dev server
+npm test         # simulation + framing + DOM-wiring tests
+npm run build    # static bundle in dist/ (serves from any subpath)
+```
+
+Drag any slider and the cone resweeps live. Pick a preset to reframe the numbers for a
+different domain, tune from there, then share the URL or export a PNG.
 
 ## Stack
 
@@ -51,7 +66,9 @@ See [`docs/VISION.md`](docs/VISION.md) for the full design rationale and
 
 ## Status
 
-Early scaffold — see the backlog for what's built vs. planned.
+Core is functionally complete: the live fan chart, presets, sharing, export, and sound all
+work end to end. See [`docs/BACKLOG.md`](docs/BACKLOG.md) for remaining polish and
+[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for the module map.
 
 ## License
 
