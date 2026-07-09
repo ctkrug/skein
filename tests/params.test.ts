@@ -21,7 +21,7 @@ describe("clampSlider", () => {
 
   it("falls back on non-finite input rather than corrupting state", () => {
     expect(clampSlider(spec("variance"), NaN, 42)).toBe(42);
-    expect(clampSlider(spec("variance"), Infinity, 42)).toBe(400);
+    expect(clampSlider(spec("variance"), Infinity, 42)).toBe(42);
   });
 });
 
