@@ -32,8 +32,12 @@ export interface DecodedState {
 export function decodeState(hash: string): DecodedState {
   const q = new URLSearchParams(hash.replace(/^#/, ""));
   const spec = (key: string) => SLIDERS.find((s) => s.key === key)!;
-  const num = (raw: string | null, fallback: number, key: string) =>
-    clampSlider(spec(key), raw === null ? NaN : Number(raw), fallback);
+  const num = (raw: string | null, fallback: number, key: string) => {
+    // Treat missing or blank as absent so `v=` (Number("") === 0) falls back
+    // to the default rather than silently snapping the slider to zero.
+    const value = raw === null || raw.trim() === "" ? NaN : Number(raw);
+    return clampSlider(spec(key), value, fallback);
+  };
 
   const params: ScenarioParams = {
     mean: num(q.get("m"), DEFAULT_PARAMS.mean, "mean"),
