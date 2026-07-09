@@ -1,5 +1,8 @@
 # Scenario Loom
 
+[![CI](https://github.com/ctkrug/scenario-loom/actions/workflows/ci.yml/badge.svg)](https://github.com/ctkrug/scenario-loom/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 A domain-agnostic Monte Carlo sandbox in the browser. Set a mean, a variance, and a
 correlation with three sliders and watch thousands of simulated paths sweep across the
 screen live, tracing a fan chart that widens and narrows as you drag.
