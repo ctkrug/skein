@@ -10,5 +10,11 @@ export default defineConfig({
   test: {
     globals: true,
     include: ["tests/**/*.test.ts"],
+    coverage: {
+      provider: "v8",
+      include: ["src/**"],
+      // Boot glue and type shims carry no logic worth covering.
+      exclude: ["src/main.ts", "src/vite-env.d.ts"],
+    },
   },
 });
