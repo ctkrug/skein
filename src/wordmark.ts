@@ -10,7 +10,10 @@ export function staggerDelays(count: number, step = 40): number[] {
   return Array.from({ length: Math.max(0, count) }, (_, i) => i * step);
 }
 
-export function buildWordmark(text: string, reducedMotion: boolean): HTMLElement {
+export function buildWordmark(
+  text: string,
+  reducedMotion: boolean,
+): HTMLElement {
   const h1 = document.createElement("h1");
   h1.className = "wordmark";
   const delays = staggerDelays(text.length);

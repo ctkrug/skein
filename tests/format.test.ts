@@ -24,7 +24,9 @@ describe("formatSigned", () => {
 
 describe("exportFilename", () => {
   it("slugifies the preset name", () => {
-    expect(exportFilename("Volatile stock")).toBe("scenario-loom-volatile-stock.png");
+    expect(exportFilename("Volatile stock")).toBe(
+      "scenario-loom-volatile-stock.png",
+    );
   });
 
   it("falls back when the name has no usable characters", () => {

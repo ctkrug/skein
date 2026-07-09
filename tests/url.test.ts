@@ -4,8 +4,16 @@ import { DEFAULT_PARAMS } from "../src/params";
 
 describe("url round-trip", () => {
   it("restores the same slider values it encoded", () => {
-    const params = { mean: 42, variance: 250, correlation: -0.3, paths: 1500, seed: 1 };
-    const { params: back, presetId } = decodeState(encodeState(params, "streak"));
+    const params = {
+      mean: 42,
+      variance: 250,
+      correlation: -0.3,
+      paths: 1500,
+      seed: 1,
+    };
+    const { params: back, presetId } = decodeState(
+      encodeState(params, "streak"),
+    );
     expect(back.mean).toBe(42);
     expect(back.variance).toBe(250);
     expect(back.correlation).toBe(-0.3);

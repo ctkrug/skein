@@ -15,7 +15,9 @@ describe("Synth mute state", () => {
   });
 
   it("restores a persisted muted preference", () => {
-    expect(new Synth(fakeStore({ "scenario-loom:muted": "1" })).isMuted).toBe(true);
+    expect(new Synth(fakeStore({ "scenario-loom:muted": "1" })).isMuted).toBe(
+      true,
+    );
   });
 
   it("toggles and persists across instances sharing a store", () => {

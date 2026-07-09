@@ -1,4 +1,9 @@
-import { SLIDERS, clampSlider, DEFAULT_PARAMS, type ScenarioParams } from "./params";
+import {
+  SLIDERS,
+  clampSlider,
+  DEFAULT_PARAMS,
+  type ScenarioParams,
+} from "./params";
 
 /**
  * Serializes a scenario into a compact hash fragment such as

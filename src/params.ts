@@ -52,7 +52,11 @@ export const DEFAULT_PARAMS: ScenarioParams = {
  * input back to the current value so a malformed URL or input event can never
  * push the simulation into an invalid state.
  */
-export function clampSlider(spec: SliderSpec, value: number, fallback: number): number {
+export function clampSlider(
+  spec: SliderSpec,
+  value: number,
+  fallback: number,
+): number {
   if (!Number.isFinite(value)) return fallback;
   return Math.min(spec.max, Math.max(spec.min, value));
 }

@@ -7,12 +7,7 @@ import {
   type ScenarioParams,
   type SliderSpec,
 } from "./params";
-import {
-  PRESETS,
-  presetById,
-  DEFAULT_PRESET_ID,
-  type Preset,
-} from "./presets";
+import { PRESETS, presetById, DEFAULT_PRESET_ID, type Preset } from "./presets";
 import { encodeState, decodeState } from "./url";
 import { Synth } from "./audio";
 import { formatValue, formatSigned, exportFilename } from "./format";
@@ -52,7 +47,11 @@ export class App {
   private readonly presetButtons = new Map<string, HTMLButtonElement>();
   private caption!: HTMLElement;
   private status!: HTMLElement;
-  private readout!: { median: HTMLElement; range: HTMLElement; memory: HTMLElement };
+  private readout!: {
+    median: HTMLElement;
+    range: HTMLElement;
+    memory: HTMLElement;
+  };
   private muteBtn!: HTMLButtonElement;
   private frame!: HTMLElement;
   private sweepRaf = 0;
@@ -63,9 +62,10 @@ export class App {
     this.framing =
       presetById(decoded.presetId ?? "") ?? presetById(DEFAULT_PRESET_ID)!;
     // If the hash carried an explicit preset with no custom edits, keep it lit.
-    this.activePresetId = decoded.presetId && presetById(decoded.presetId)
-      ? decoded.presetId
-      : null;
+    this.activePresetId =
+      decoded.presetId && presetById(decoded.presetId)
+        ? decoded.presetId
+        : null;
     if (!location.hash) this.applyPresetValues(this.framing);
 
     this.canvas = el("canvas", { class: "chart__canvas" });
@@ -120,7 +120,10 @@ export class App {
     const exportBtn = el("button", {
       class: "btn btn--ghost",
       text: "Export PNG",
-      attrs: { type: "button", "aria-label": "Export the chart as a PNG image" },
+      attrs: {
+        type: "button",
+        "aria-label": "Export the chart as a PNG image",
+      },
     });
     exportBtn.addEventListener("click", () => this.exportPng());
 
@@ -147,7 +150,10 @@ export class App {
   }
 
   private buildAxis(): HTMLElement {
-    const axis = el("div", { class: "chart__axis", attrs: { "aria-hidden": "true" } });
+    const axis = el("div", {
+      class: "chart__axis",
+      attrs: { "aria-hidden": "true" },
+    });
     this.axisUnit = el("span", { class: "chart__axis-unit" });
     axis.appendChild(this.axisUnit);
     return axis;
@@ -157,7 +163,10 @@ export class App {
   private buildRail(): HTMLElement {
     const rail = el("aside", { class: "rail" });
 
-    const presets = el("div", { class: "presets", attrs: { role: "group", "aria-label": "Domain presets" } });
+    const presets = el("div", {
+      class: "presets",
+      attrs: { role: "group", "aria-label": "Domain presets" },
+    });
     presets.appendChild(el("h2", { class: "rail__title", text: "Reframe as" }));
     const row = el("div", { class: "presets__row" });
     for (const preset of PRESETS) {
@@ -192,7 +201,11 @@ export class App {
     const wrap = el("div", { class: "control" });
     const head = el("div", { class: "control__head" });
     const id = `slider-${spec.key}`;
-    const label = el("label", { class: "control__label", text: spec.label, attrs: { for: id } });
+    const label = el("label", {
+      class: "control__label",
+      text: spec.label,
+      attrs: { for: id },
+    });
     const value = el("output", { class: "control__value", attrs: { for: id } });
     head.append(label, value);
 
@@ -207,7 +220,9 @@ export class App {
         "aria-label": spec.label,
       },
     });
-    input.addEventListener("input", () => this.onSlider(spec, Number(input.value)));
+    input.addEventListener("input", () =>
+      this.onSlider(spec, Number(input.value)),
+    );
     input.addEventListener("pointerdown", () => this.synth.resume());
 
     wrap.append(head, input);
@@ -279,7 +294,10 @@ export class App {
 
   private resimulate(): void {
     this.paths = simulate(toSimParams(this.state));
-    this.bands = { percentiles: PERCENTILES, rows: percentileBands(this.paths, PERCENTILES) };
+    this.bands = {
+      percentiles: PERCENTILES,
+      rows: percentileBands(this.paths, PERCENTILES),
+    };
   }
 
   // ---- rendering ------------------------------------------------------------

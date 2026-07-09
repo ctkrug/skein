@@ -26,7 +26,10 @@ export interface RenderOptions {
  * outermost first, plus the centre row index to stroke as the median (or -1
  * when there is an even number of rows and no exact centre).
  */
-export function bandPairs(count: number): { pairs: [number, number][]; median: number } {
+export function bandPairs(count: number): {
+  pairs: [number, number][];
+  median: number;
+} {
   const pairs: [number, number][] = [];
   const half = Math.floor(count / 2);
   for (let i = 0; i < half; i++) pairs.push([i, count - 1 - i]);
@@ -62,7 +65,11 @@ export class FanChart {
    * devicePixelRatio and scales the context so all subsequent drawing uses CSS
    * pixels. Call on mount and on every resize.
    */
-  resize(cssWidth: number, cssHeight: number, dpr = window.devicePixelRatio || 1): void {
+  resize(
+    cssWidth: number,
+    cssHeight: number,
+    dpr = window.devicePixelRatio || 1,
+  ): void {
     this.cssWidth = cssWidth;
     this.cssHeight = cssHeight;
     this.dpr = dpr;

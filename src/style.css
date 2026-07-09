@@ -46,8 +46,16 @@ body {
   background-color: var(--bg);
   /* Paper treatment: a soft warm vignette + a faint fibre grain, never a flat fill. */
   background-image:
-    radial-gradient(120% 80% at 50% -10%, rgba(255, 250, 240, 0.7), transparent 60%),
-    radial-gradient(140% 120% at 100% 120%, rgba(43, 90, 99, 0.06), transparent 55%),
+    radial-gradient(
+      120% 80% at 50% -10%,
+      rgba(255, 250, 240, 0.7),
+      transparent 60%
+    ),
+    radial-gradient(
+      140% 120% at 100% 120%,
+      rgba(43, 90, 99, 0.06),
+      transparent 55%
+    ),
     repeating-linear-gradient(
       0deg,
       rgba(36, 31, 26, 0.015) 0,

@@ -23,7 +23,14 @@ function lag1Autocorrelation(paths: PathSet, mean: number): number {
 
 describe("correlation parameter drives autocorrelation", () => {
   const run = (correlation: number) =>
-    simulate({ mean: 0, variance: 1, correlation, steps: 60, paths: 3000, seed: 11 });
+    simulate({
+      mean: 0,
+      variance: 1,
+      correlation,
+      steps: 60,
+      paths: 3000,
+      seed: 11,
+    });
 
   it("recovers a positive setting as positive autocorrelation", () => {
     const ac = lag1Autocorrelation(run(0.7), 0);

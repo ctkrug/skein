@@ -54,30 +54,33 @@ describe("App interaction", () => {
     const mean = document.querySelector<HTMLInputElement>("#slider-mean")!;
     mean.value = "150";
     mean.dispatchEvent(new Event("input"));
-    const output = document.querySelector<HTMLElement>('.control__value')!;
+    const output = document.querySelector<HTMLElement>(".control__value")!;
     expect(output.textContent).toBe("150");
     expect(location.hash).toContain("m=150");
   });
 
   it("marks a preset active and applies its values when clicked", () => {
     mount();
-    const streak = [...document.querySelectorAll<HTMLButtonElement>(".preset")].find(
-      (b) => b.textContent === "Streaky shooter",
-    )!;
+    const streak = [
+      ...document.querySelectorAll<HTMLButtonElement>(".preset"),
+    ].find((b) => b.textContent === "Streaky shooter")!;
     streak.click();
     expect(streak.classList.contains("preset--active")).toBe(true);
-    const corr = document.querySelector<HTMLInputElement>("#slider-correlation")!;
+    const corr = document.querySelector<HTMLInputElement>(
+      "#slider-correlation",
+    )!;
     expect(Number(corr.value)).toBe(-0.4);
   });
 
   it("deactivates the preset once a slider is moved", () => {
     mount();
-    const stock = [...document.querySelectorAll<HTMLButtonElement>(".preset")].find(
-      (b) => b.textContent === "Volatile stock",
-    )!;
+    const stock = [
+      ...document.querySelectorAll<HTMLButtonElement>(".preset"),
+    ].find((b) => b.textContent === "Volatile stock")!;
     stock.click();
     expect(stock.classList.contains("preset--active")).toBe(true);
-    const variance = document.querySelector<HTMLInputElement>("#slider-variance")!;
+    const variance =
+      document.querySelector<HTMLInputElement>("#slider-variance")!;
     variance.value = "300";
     variance.dispatchEvent(new Event("input"));
     expect(stock.classList.contains("preset--active")).toBe(false);
@@ -85,9 +88,9 @@ describe("App interaction", () => {
 
   it("exports a PNG without throwing", () => {
     mount();
-    const exportBtn = [...document.querySelectorAll<HTMLButtonElement>(".btn")].find(
-      (b) => b.textContent === "Export PNG",
-    )!;
+    const exportBtn = [
+      ...document.querySelectorAll<HTMLButtonElement>(".btn"),
+    ].find((b) => b.textContent === "Export PNG")!;
     expect(() => exportBtn.click()).not.toThrow();
     expect(URL.createObjectURL).toHaveBeenCalled();
   });
@@ -96,7 +99,11 @@ describe("App interaction", () => {
     document.body.innerHTML = '<div id="app"></div>';
     location.hash = "#m=42&v=250&c=-0.3&n=1500&p=streak";
     new App(document.getElementById("app")!);
-    expect(document.querySelector<HTMLInputElement>("#slider-mean")!.value).toBe("42");
-    expect(document.querySelector<HTMLInputElement>("#slider-paths")!.value).toBe("1500");
+    expect(
+      document.querySelector<HTMLInputElement>("#slider-mean")!.value,
+    ).toBe("42");
+    expect(
+      document.querySelector<HTMLInputElement>("#slider-paths")!.value,
+    ).toBe("1500");
   });
 });
