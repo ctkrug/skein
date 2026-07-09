@@ -35,7 +35,7 @@ presets only reframe labels and starting values.
 ### Simulation (pure, DOM-free)
 
 - `src/sim/simulate.ts` — `simulate()` (AR(1): `x[t] = mean + corr·(x[t-1] −
-  mean) + N(0, variance)`) and `percentileBands()`. The correctness lives here.
+mean) + N(0, variance)`) and `percentileBands()`. The correctness lives here.
 
 ### Rendering
 
@@ -71,7 +71,7 @@ presets only reframe labels and starting values.
 
 - `npm run dev` — Vite dev server.
 - `npm test` — Vitest. Pure-logic suites run in Node; `tests/app.integration.
-  test.ts` runs under happy-dom (Node 18 breaks jsdom's deps here).
+test.ts` runs under happy-dom (Node 18 breaks jsdom's deps here).
 - `npm run build` — `tsc --noEmit && vite build` → `dist/` (static,
   `base: "./"` so it serves from a subpath like `/scenario-loom/`).
 - `npm run lint` / `npm run format:check` — ESLint + Prettier (CI gates).
