@@ -313,7 +313,7 @@ body {
   font-size: 0.8125rem;
   font-weight: 500;
   padding: 8px 12px;
-  min-height: 40px;
+  min-height: 44px;
   color: var(--ink);
   background: var(--surface-2);
   border: 1px solid transparent;
