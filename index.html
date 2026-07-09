@@ -3,15 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f4ede1" />
     <title>Scenario Loom — a Monte Carlo sandbox</title>
     <meta
       name="description"
       content="Drag sliders for mean, variance, and correlation and watch a live fan chart of thousands of simulated paths sweep the screen."
     />
-    <link rel="stylesheet" href="./src/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Inter:wght@400;500;600&display=swap"
+    />
   </head>
   <body>
     <div id="app"></div>
+    <noscript>Scenario Loom needs JavaScript to run its live simulation.</noscript>
     <script type="module" src="./src/main.ts"></script>
   </body>
 </html>
