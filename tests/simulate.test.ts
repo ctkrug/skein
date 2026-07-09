@@ -101,6 +101,32 @@ describe("simulate", () => {
       }),
     ).toThrow(RangeError);
   });
+
+  it("floors a fractional path count instead of throwing on a bad length", () => {
+    // A hand-edited hash like `#n=137.5` reaches simulate as a float; a naive
+    // `new Array(137.5)` throws "Invalid array length" and white-screens the app.
+    const paths = simulate({
+      mean: 0,
+      variance: 1,
+      correlation: 0,
+      steps: 5,
+      paths: 137.5,
+      seed: 1,
+    });
+    expect(paths).toHaveLength(137);
+  });
+
+  it("floors a fractional step count to whole steps", () => {
+    const paths = simulate({
+      mean: 0,
+      variance: 1,
+      correlation: 0,
+      steps: 8.9,
+      paths: 3,
+      seed: 1,
+    });
+    for (const path of paths) expect(path).toHaveLength(8);
+  });
 });
 
 describe("percentileBands", () => {
