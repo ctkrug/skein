@@ -189,3 +189,22 @@ describe("percentileBands", () => {
     expect(Array.from(median)).toEqual([5, 5, 5, 5]);
   });
 });
+
+describe("performance", () => {
+  it("simulates and bands the max slider load well under a second", () => {
+    // DESIGN.md's core requirement: a slider drag resimulates in well under a
+    // second end to end, at the most demanding settings (5,000 paths, the top
+    // of the paths slider).
+    const start = performance.now();
+    const paths = simulate({
+      mean: 100,
+      variance: 400,
+      correlation: 0.35,
+      steps: 60,
+      paths: 5000,
+      seed: 1,
+    });
+    percentileBands(paths, [0.05, 0.25, 0.5, 0.75, 0.95]);
+    expect(performance.now() - start).toBeLessThan(500);
+  });
+});
