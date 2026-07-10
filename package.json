@@ -26,7 +26,8 @@
     "lint": "eslint . --max-warnings=0",
     "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "sample": "node scripts/gen-sample.mjs"
   },
   "devDependencies": {
     "@types/d3-random": "^3.0.3",
