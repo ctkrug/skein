@@ -44,8 +44,9 @@ mean) + N(0, variance)`) and `percentileBands()`. The correctness lives here.
   `centeredDomain` that keep the cone responsive to variance instead of the view
   rescaling to hug the data.
 - `src/render/fanchart.ts` — `FanChart` class: DPR-aware canvas sizing, nested
-  percentile-band fills, faint raw-path strokes (density-scaled alpha), the
-  crimson median line, and a left-to-right `reveal` for the sweep animation.
+  percentile-band fills, faint raw-path strokes (density-scaled alpha, capped
+  at `MAX_DRAWN_PATHS` — see Key decisions), the crimson median line, and a
+  left-to-right `reveal` for the sweep animation.
 - `src/theme.ts` — palette tokens mirrored from `docs/DESIGN.md` for canvas
   drawing (which sits outside the CSS cascade), plus `withAlpha`.
 
@@ -84,4 +85,12 @@ test.ts` runs under happy-dom (Node 18 breaks jsdom's deps here).
   band fills a `~√(variance/maxVariance)` fraction of a steady view.
 - **Canvas for paths, pure TS for math.** Thousands of strokes need direct
   canvas drawing; the scales/bands stay pure and unit-tested.
+- **Raw-path strokes are capped, not scaled to zero.** Drawing every simulated
+  path (up to 5,000) blacks out the chart: even a low per-stroke alpha
+  saturates to solid black once ~15-20 near-identical lines overlap in the
+  same pixel, which happens well before reaching the full path count. Instead
+  of chasing alpha lower, `sampleForDrawing()` caps the strokes actually drawn
+  at `MAX_DRAWN_PATHS` (an evenly-strided subsample) and `densityAlpha()` is
+  tuned against that capped count, so the "faint ink threads" texture stays
+  legible at any path count instead of blacking out the percentile bands.
 - **Everything relative-path.** Static bundle, subpath-safe, backend-free.
