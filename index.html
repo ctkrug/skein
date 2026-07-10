@@ -4,10 +4,18 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#f4ede1" />
-    <title>Scenario Loom — a Monte Carlo sandbox</title>
+    <title>Skein — watch a thousand futures fan out live</title>
     <meta
       name="description"
-      content="Drag sliders for mean, variance, and correlation and watch a live fan chart of thousands of simulated paths sweep the screen."
+      content="Skein is a browser Monte Carlo sandbox: drag sliders for mean, variance, and correlation and watch a live fan chart of thousands of simulated paths. No install, no account."
+    />
+    <meta
+      property="og:title"
+      content="Skein — watch a thousand futures fan out live"
+    />
+    <meta
+      property="og:description"
+      content="A Monte Carlo sandbox in the browser. Set a mean, a variance, and a correlation and watch thousands of simulated paths fan out live as a percentile chart."
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -18,9 +26,91 @@
   </head>
   <body>
     <div id="app"></div>
-    <noscript
-      >Scenario Loom needs JavaScript to run its live simulation.</noscript
-    >
+    <noscript>Skein needs JavaScript to run its live simulation.</noscript>
+
+    <section class="explainer" aria-labelledby="explainer-title">
+      <div class="explainer__inner">
+        <h2 id="explainer-title" class="explainer__title">What Skein is</h2>
+        <p>
+          Skein is a free, browser-based Monte Carlo sandbox. You set three
+          numbers (a mean, a variance, and a correlation) and it simulates
+          thousands of possible paths, then draws them as a fan chart: a cone of
+          outcomes that widens the more uncertain the future is. There is
+          nothing to install, no account, and no data to upload. Drag a slider
+          and the whole picture resimulates in under a second, so you can feel
+          how the shape of uncertainty responds to each assumption.
+        </p>
+        <p>
+          Most simulation tools are locked to one field and hide the run behind
+          a static report. Skein keeps the three real parameters in front of you
+          and makes the chart itself the interface, so the same controls stand
+          in for a project timeline, a batting average, or a share price without
+          changing a single line of the math underneath.
+        </p>
+
+        <h2 class="explainer__title">Questions</h2>
+        <dl class="faq">
+          <dt class="faq__q">What is a Monte Carlo fan chart?</dt>
+          <dd class="faq__a">
+            A fan chart shows the range of outcomes a simulation produces
+            instead of a single prediction. Skein runs thousands of random paths
+            forward, then shades the middle 50% and middle 90% as nested bands
+            around the median line. The band is narrow when the future is
+            predictable and fans out wide when it is not.
+          </dd>
+
+          <dt class="faq__q">How do I read the percentile bands?</dt>
+          <dd class="faq__a">
+            The crimson line is the median: half of the simulated paths land
+            above it and half below. The inner band covers the 25th to 75th
+            percentile, and the outer band the 5th to 95th. So four times in
+            five, the outcome at that step falls somewhere inside the outer
+            band.
+          </dd>
+
+          <dt class="faq__q">
+            What do the mean, variance, and correlation sliders change?
+          </dt>
+          <dd class="faq__a">
+            Mean sets where the paths drift toward. Variance sets how large each
+            random step is, which is what opens or closes the cone. Correlation
+            sets how much each step follows the last: near zero the steps are
+            independent, high values make long smooth swings, and negative
+            values make the paths oscillate step to step.
+          </dd>
+
+          <dt class="faq__q">Is Skein tied to finance, or any one domain?</dt>
+          <dd class="faq__a">
+            No. The simulation never branches on a domain. The presets only swap
+            labels and starting values, so a volatile stock and a slipping
+            project timeline run through the exact same code. That is the point:
+            uncertainty has the same shape wherever it shows up.
+          </dd>
+
+          <dt class="faq__q">
+            Do I need an account or an internet connection?
+          </dt>
+          <dd class="faq__a">
+            Neither, once the page has loaded. Everything runs in your browser.
+            Your current scenario is encoded in the page link, so you can share
+            or bookmark an exact setup, and you can export the chart as a PNG
+            with one click.
+          </dd>
+        </dl>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      <a
+        class="site-footer__link"
+        href="https://github.com/ctkrug/scenario-loom"
+        >View on GitHub</a
+      >
+      <a class="site-footer__link" href="https://apps.charliekrug.com"
+        >More by Charlie Krug</a
+      >
+    </footer>
+
     <script type="module" src="./src/main.ts"></script>
   </body>
 </html>
