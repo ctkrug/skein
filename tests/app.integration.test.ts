@@ -1,6 +1,7 @@
 // @vitest-environment happy-dom
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { App } from "../src/app";
+import { FanChart } from "../src/render/fanchart";
 
 /**
  * Integration coverage for the DOM wiring: mounts the real App in jsdom with a
@@ -204,5 +205,51 @@ describe("App interaction", () => {
       ...document.querySelectorAll<HTMLButtonElement>(".preset"),
     ].find((b) => b.textContent === "Volatile stock")!;
     expect(stock.classList.contains("preset--active")).toBe(true);
+  });
+
+  it("animates the sweep reveal from 0 toward 1 when motion isn't reduced", () => {
+    // The other tests all run under the reduced-motion stub (matches: true),
+    // which never exercises animateSweep()'s rAF loop at all; give this one
+    // real layout dimensions, an unmocked motion preference, and a
+    // manually-flushed rAF queue so the reveal-over-time logic actually runs.
+    window.matchMedia = vi.fn().mockReturnValue({
+      matches: false,
+      addEventListener: () => {},
+      removeEventListener: () => {},
+    }) as never;
+    const width = vi
+      .spyOn(HTMLElement.prototype, "clientWidth", "get")
+      .mockReturnValue(800);
+    const height = vi
+      .spyOn(HTMLElement.prototype, "clientHeight", "get")
+      .mockReturnValue(400);
+    let queued: FrameRequestCallback[] = [];
+    window.requestAnimationFrame = ((cb: FrameRequestCallback) => {
+      queued.push(cb);
+      return queued.length;
+    }) as typeof requestAnimationFrame;
+    window.cancelAnimationFrame = (() => {}) as typeof cancelAnimationFrame;
+    const flush = (ts: number) => {
+      const due = queued;
+      queued = [];
+      due.forEach((cb) => cb(ts));
+    };
+    const renderSpy = vi.spyOn(FanChart.prototype, "render");
+    try {
+      mount();
+      flush(0);
+      flush(325); // halfway through the 650ms sweep
+      flush(650); // sweep complete
+      const reveals = renderSpy.mock.calls
+        .map((c) => c[2]?.reveal)
+        .filter((r): r is number => r !== undefined);
+      expect(reveals.length).toBeGreaterThan(1);
+      expect(reveals[0]).toBeLessThan(1);
+      expect(reveals[reveals.length - 1]).toBe(1);
+    } finally {
+      width.mockRestore();
+      height.mockRestore();
+      renderSpy.mockRestore();
+    }
   });
 });
