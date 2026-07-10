@@ -252,4 +252,36 @@ describe("App interaction", () => {
       renderSpy.mockRestore();
     }
   });
+
+  it("settles on the last of two rapidly clicked presets, mid-animation", () => {
+    mount();
+    const buttons = [
+      ...document.querySelectorAll<HTMLButtonElement>(".preset"),
+    ];
+    const streak = buttons.find((b) => b.textContent === "Streaky shooter")!;
+    const coin = buttons.find((b) => b.textContent === "Coin-flip baseline")!;
+    expect(() => {
+      streak.click();
+      coin.click(); // fired before streak's sweep animation would settle
+    }).not.toThrow();
+    expect(coin.classList.contains("preset--active")).toBe(true);
+    expect(streak.classList.contains("preset--active")).toBe(false);
+    const corr = document.querySelector<HTMLInputElement>(
+      "#slider-correlation",
+    )!;
+    expect(Number(corr.value)).toBe(0);
+  });
+
+  it("tolerates a double-click on export without duplicating or crashing", () => {
+    mount();
+    const exportBtn = [
+      ...document.querySelectorAll<HTMLButtonElement>(".btn"),
+    ].find((b) => b.textContent === "Export PNG")!;
+    expect(() => {
+      exportBtn.click();
+      exportBtn.click();
+    }).not.toThrow();
+    expect(URL.createObjectURL).toHaveBeenCalledTimes(2);
+    expect(document.querySelector(".status")!.textContent).toBe("Exported PNG");
+  });
 });
