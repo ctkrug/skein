@@ -41,10 +41,11 @@ watch the cone visibly widen, in real time, not after a "Run" button and a spinn
   This is expressive enough to cover independent draws (correlation = 0), mean-reverting
   swings (correlation > 0), and choppy oscillation (correlation < 0) with three plain
   numbers — no domain-specific parameters to add later.
-- **Canvas for raw paths, D3 for scales/shapes/the fan overlay.** Thousands of individual
-  path strokes need direct canvas drawing to hit 60fps; D3's scale and shape utilities
-  compute the percentile-band geometry without fighting SVG's per-element DOM overhead at
-  that path count.
+- **Canvas for everything, pure TS for the math.** Thousands of individual path strokes
+  need direct canvas drawing to hit 60fps, so the value→pixel scales and the percentile-band
+  geometry are hand-rolled as small, DOM-free functions (`src/render/scales.ts`) rather than
+  pulled from a charting library. The only D3 dependency is `d3-random` for the seeded
+  Gaussian noise source.
 - **The simulation core has zero DOM dependency.** `src/sim/` is pure TypeScript,
   independently unit-testable (seeded reproducibility, convergence to the configured
   mean, variance scaling the spread) without a browser — the renderer is a thin
