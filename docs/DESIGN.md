@@ -2,7 +2,7 @@
 
 ## 1. Aesthetic direction
 
-**Scenario Loom is an editorial data-journalism broadsheet.** It reads like a chart lifted
+**Skein is an editorial data-journalism broadsheet.** It reads like a chart lifted
 from a print statistics feature — the kind of cream-paper, crimson-accented forecast cone
 you'd see captioned "our model's 1,000 simulated outcomes" in a serious newspaper's data
 desk. Warm ivory paper, hairline rules, a serif masthead, and one confident crimson accent
@@ -56,7 +56,7 @@ thumbs. No dead margin — the canvas always fills its available width edge-to-e
 
 ## 4. Signature detail
 
-The masthead wordmark "Scenario Loom" animates on load: individual letters settle in with
+The masthead wordmark "Skein" animates on load: individual letters settle in with
 a 40ms stagger and a subtle serif-weight overshoot, as if type were being set on a press —
 then a thin crimson underline rule draws itself left-to-right beneath it (280ms ease-out).
 This same underline-draw motion is reused as the "loading" tell whenever a resimulation is

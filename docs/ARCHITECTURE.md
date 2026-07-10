@@ -4,7 +4,7 @@ A concise map of the codebase for anyone picking it up mid-stream.
 
 ## What it is
 
-Scenario Loom is a static, single-page TypeScript app: three sliders (mean,
+Skein is a static, single-page TypeScript app: three sliders (mean,
 variance, correlation) plus a path-count control drive an AR(1) Monte Carlo
 engine, and a canvas fan chart of the simulated paths redraws live on every
 gesture. No backend, no persistence beyond a shareable URL hash and a muted-

@@ -3,7 +3,7 @@ import { App } from "./app";
 import { installFavicon } from "./favicon";
 
 /**
- * Boots Scenario Loom: installs the generated favicon and mounts the app into
+ * Boots Skein: installs the generated favicon and mounts the app into
  * #app. A missing mount point fails loudly in the console rather than silently
  * rendering nothing.
  */
