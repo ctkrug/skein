@@ -27,6 +27,19 @@ describe("Synth mute state", () => {
     expect(new Synth(store).isMuted).toBe(true);
   });
 
+  it("never throws in the constructor when the store's getItem itself throws", () => {
+    // A store that exists but whose getItem call throws (some restrictive
+    // sandboxes) must not crash App's whole constructor over a mute prefs read.
+    const store: KeyValueStore = {
+      getItem: () => {
+        throw new Error("SecurityError");
+      },
+      setItem: () => {},
+    };
+    expect(() => new Synth(store)).not.toThrow();
+    expect(new Synth(store).isMuted).toBe(false);
+  });
+
   it("never throws when the store's setItem itself throws", () => {
     // Old Safari private-browsing mode throws QuotaExceededError from
     // setItem even for a tiny write, while getItem still works fine.
