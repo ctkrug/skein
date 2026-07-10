@@ -20,6 +20,11 @@ describe("formatSigned", () => {
     expect(formatSigned(-0.6)).toBe("−0.60");
     expect(formatSigned(0)).toBe("±0.00");
   });
+
+  it("shows an em dash for non-finite input", () => {
+    expect(formatSigned(NaN)).toBe("—");
+    expect(formatSigned(-Infinity)).toBe("—");
+  });
 });
 
 describe("exportFilename", () => {
