@@ -103,6 +103,51 @@ describe("App interaction", () => {
     expect(URL.createObjectURL).toHaveBeenCalled();
   });
 
+  it("flashes an export-failed message when the canvas yields no blob", () => {
+    mount();
+    HTMLCanvasElement.prototype.toBlob = function (cb: BlobCallback) {
+      cb(null);
+    } as never;
+    const exportBtn = [
+      ...document.querySelectorAll<HTMLButtonElement>(".btn"),
+    ].find((b) => b.textContent === "Export PNG")!;
+    exportBtn.click();
+    expect(document.querySelector(".status")!.textContent).toBe(
+      "Export failed",
+    );
+  });
+
+  it("toggles the mute button's label and aria state on click", () => {
+    localStorage.clear();
+    mount();
+    const muteBtn = document.querySelector<HTMLButtonElement>(".btn")!;
+    expect(muteBtn.textContent).toBe("Sound on");
+    muteBtn.click();
+    expect(muteBtn.getAttribute("aria-pressed")).toBe("false");
+    expect(muteBtn.getAttribute("aria-label")).toBe("Unmute sound effects");
+    muteBtn.click();
+    expect(muteBtn.getAttribute("aria-pressed")).toBe("true");
+    expect(muteBtn.getAttribute("aria-label")).toBe("Mute sound effects");
+  });
+
+  it("clears a flash message after its timeout", () => {
+    vi.useFakeTimers();
+    try {
+      mount();
+      const exportBtn = [
+        ...document.querySelectorAll<HTMLButtonElement>(".btn"),
+      ].find((b) => b.textContent === "Export PNG")!;
+      exportBtn.click();
+      expect(document.querySelector(".status")!.textContent).toBe(
+        "Exported PNG",
+      );
+      vi.advanceTimersByTime(2400);
+      expect(document.querySelector(".status")!.textContent).toBe("");
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it("restores state from a URL hash on load", () => {
     document.body.innerHTML = '<div id="app"></div>';
     location.hash = "#m=42&v=250&c=-0.3&n=1500&p=streak";
