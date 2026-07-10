@@ -127,6 +127,30 @@ describe("simulate", () => {
     });
     for (const path of paths) expect(path).toHaveLength(8);
   });
+
+  it("rejects a step count below one", () => {
+    expect(() =>
+      simulate({ mean: 0, variance: 1, correlation: 0, steps: 0, paths: 1 }),
+    ).toThrow(RangeError);
+  });
+
+  it("rejects a path count below one", () => {
+    expect(() =>
+      simulate({ mean: 0, variance: 1, correlation: 0, steps: 10, paths: 0 }),
+    ).toThrow(RangeError);
+  });
+
+  it("draws from Math.random when no seed is given", () => {
+    const paths = simulate({
+      mean: 5,
+      variance: 2,
+      correlation: 0.1,
+      steps: 10,
+      paths: 4,
+    });
+    expect(paths).toHaveLength(4);
+    for (const path of paths) expect(path[0]).toBe(5);
+  });
 });
 
 describe("percentileBands", () => {
@@ -144,6 +168,12 @@ describe("percentileBands", () => {
       expect(p05[t]).toBeLessThanOrEqual(p50[t]);
       expect(p50[t]).toBeLessThanOrEqual(p95[t]);
     }
+  });
+
+  it("returns empty bands for an empty path set", () => {
+    const bands = percentileBands([], [0.05, 0.5, 0.95]);
+    expect(bands).toHaveLength(3);
+    for (const band of bands) expect(band).toHaveLength(0);
   });
 
   it("returns a degenerate band for a single path", () => {
