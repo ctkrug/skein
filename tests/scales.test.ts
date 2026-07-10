@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { domainOf, xMap, yMap } from "../src/render/scales";
+import { domainOf, outerDeviation, xMap, yMap } from "../src/render/scales";
 
 describe("domainOf", () => {
   it("covers the min and max across all rows, with padding", () => {
@@ -19,6 +19,12 @@ describe("domainOf", () => {
   it("falls back to a unit window for empty input", () => {
     expect(domainOf([])).toEqual({ min: 0, max: 1 });
     expect(domainOf([new Float64Array(0)])).toEqual({ min: 0, max: 1 });
+  });
+});
+
+describe("outerDeviation", () => {
+  it("returns zero for an empty row set", () => {
+    expect(outerDeviation([], 100)).toBe(0);
   });
 });
 
