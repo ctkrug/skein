@@ -27,6 +27,20 @@ describe("Synth mute state", () => {
     expect(new Synth(store).isMuted).toBe(true);
   });
 
+  it("never throws when the store's setItem itself throws", () => {
+    // Old Safari private-browsing mode throws QuotaExceededError from
+    // setItem even for a tiny write, while getItem still works fine.
+    const store: KeyValueStore = {
+      getItem: () => null,
+      setItem: () => {
+        throw new Error("QuotaExceededError");
+      },
+    };
+    const s = new Synth(store);
+    expect(() => s.toggleMute()).not.toThrow();
+    expect(s.isMuted).toBe(true);
+  });
+
   it("fails safe to unmuted for a corrupt or hand-edited stored value", () => {
     expect(
       new Synth(fakeStore({ "scenario-loom:muted": "true" })).isMuted,
