@@ -63,6 +63,22 @@ describe("bandPairs", () => {
   it("handles a single median row with no fill pairs", () => {
     expect(bandPairs(1)).toEqual({ pairs: [], median: 0 });
   });
+
+  it("always yields in-range, symmetric indices for any row count", () => {
+    fc.assert(
+      fc.property(fc.integer({ min: 0, max: 500 }), (count) => {
+        const { pairs, median } = bandPairs(count);
+        expect(pairs).toHaveLength(Math.floor(count / 2));
+        for (const [lo, hi] of pairs) {
+          expect(lo).toBeGreaterThanOrEqual(0);
+          expect(hi).toBeLessThan(count);
+          expect(lo + hi).toBe(count - 1); // symmetric around the centre
+        }
+        if (count % 2 === 1) expect(median).toBe((count - 1) / 2);
+        else expect(median).toBe(-1);
+      }),
+    );
+  });
 });
 
 describe("densityAlpha", () => {
