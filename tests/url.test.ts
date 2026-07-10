@@ -40,6 +40,15 @@ describe("url round-trip", () => {
     expect(junk.params.correlation).toBe(DEFAULT_PARAMS.correlation);
   });
 
+  it("falls back to defaults for Infinity and numeric-overflow values", () => {
+    // Number("Infinity") and Number("1e400") are both real, finite-looking
+    // strings that parse to a non-finite number rather than NaN.
+    const { params } = decodeState("#m=Infinity&v=1e400&c=-Infinity");
+    expect(params.mean).toBe(DEFAULT_PARAMS.mean);
+    expect(params.variance).toBe(DEFAULT_PARAMS.variance);
+    expect(params.correlation).toBe(DEFAULT_PARAMS.correlation);
+  });
+
   it("tolerates a leading hash or none", () => {
     expect(decodeState("#m=50").params.mean).toBe(50);
     expect(decodeState("m=50").params.mean).toBe(50);
