@@ -23,6 +23,15 @@ function safeStore(): KeyValueStore | null {
   }
 }
 
+/** Reads a key from a store that may itself throw on access. */
+function safeRead(store: KeyValueStore | null, key: string): string | null {
+  try {
+    return store?.getItem(key) ?? null;
+  } catch {
+    return null;
+  }
+}
+
 type Ctor = new () => AudioContext;
 
 function audioCtor(): Ctor | null {
@@ -39,7 +48,7 @@ export class Synth {
   private lastBlip = 0;
 
   constructor(private readonly store: KeyValueStore | null = safeStore()) {
-    this.muted = this.store?.getItem(MUTE_KEY) === "1";
+    this.muted = safeRead(this.store, MUTE_KEY) === "1";
   }
 
   get isMuted(): boolean {
