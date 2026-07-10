@@ -107,7 +107,7 @@ export class FanChart {
     const lastStep = Math.max(1, Math.floor((steps - 1) * clamp01(reveal)));
 
     this.drawBands(bands, x, y, lastStep, bandAlpha);
-    this.drawPaths(paths, x, y, lastStep);
+    this.drawPaths(sampleForDrawing(paths), x, y, lastStep);
     this.drawMedian(bands, x, y, lastStep);
   }
 
@@ -178,13 +178,33 @@ function clamp01(v: number): number {
 }
 
 /**
+ * Raw paths actually stroked, regardless of how many the sim ran. Beyond this
+ * many, per-pixel overlap in the dense core saturates to solid black even at
+ * a low per-stroke alpha (drawing thousands of near-identical Gaussian lines
+ * always converges to a blackout, no matter how faint each one is) — a fixed
+ * sample keeps the "faint threads" texture legible at any path count.
+ */
+export const MAX_DRAWN_PATHS = 200;
+
+/** An evenly-spaced subsample of `paths`, capped at {@link MAX_DRAWN_PATHS}. */
+function sampleForDrawing(paths: PathSet): PathSet {
+  if (paths.length <= MAX_DRAWN_PATHS) return paths;
+  const stride = paths.length / MAX_DRAWN_PATHS;
+  const sample: PathSet = new Array(MAX_DRAWN_PATHS);
+  for (let i = 0; i < MAX_DRAWN_PATHS; i++) {
+    sample[i] = paths[Math.floor(i * stride)];
+  }
+  return sample;
+}
+
+/**
  * Per-path stroke alpha that keeps the aggregate ink density roughly constant
  * as path count scales, so 50 paths and 5,000 paths both read as a legible fan
  * rather than a blank sheet or a solid smear.
  */
 export function densityAlpha(count: number): number {
   if (count <= 0) return 0;
-  return clamp(6 / Math.sqrt(count), 0.015, 0.4);
+  return clamp(0.85 / Math.sqrt(count), 0.03, 0.35);
 }
 
 function clamp(v: number, lo: number, hi: number): number {

@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { bandPairs, densityAlpha, FanChart } from "../src/render/fanchart";
+import {
+  bandPairs,
+  densityAlpha,
+  FanChart,
+  MAX_DRAWN_PATHS,
+} from "../src/render/fanchart";
 import { simulate, percentileBands } from "../src/sim/simulate";
 
 /** A 2D context that tallies the draw calls a render makes, DOM-free. */
@@ -113,6 +118,29 @@ describe("FanChart.render", () => {
     chart.render([], { percentiles, rows: [] });
     expect(ctx.calls.fillRect).toBe(1);
     expect(ctx.calls.stroke).toBeUndefined();
+  });
+
+  it("caps the raw strokes drawn at MAX_DRAWN_PATHS however many paths simulated", () => {
+    // Thousands of overlapping near-black strokes saturate to solid black
+    // regardless of per-stroke alpha; capping the draw count is what keeps the
+    // bands and median visible underneath (see MAX_DRAWN_PATHS's docstring).
+    const manyPaths = simulate({
+      mean: 0,
+      variance: 25,
+      correlation: 0.3,
+      steps: 20,
+      paths: 3000,
+      seed: 1,
+    });
+    const manyBands = {
+      percentiles,
+      rows: percentileBands(manyPaths, percentiles),
+    };
+    const ctx = recordingContext();
+    const chart = new FanChart(fakeCanvas(ctx));
+    chart.resize(300, 150, 1);
+    chart.render(manyPaths, manyBands, { domain: { min: -30, max: 30 } });
+    expect(ctx.calls.stroke).toBe(MAX_DRAWN_PATHS + 1);
   });
 
   it("reveals only a left slice when reveal < 1", () => {
