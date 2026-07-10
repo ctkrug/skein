@@ -1,11 +1,12 @@
 import { describe, expect, it } from "vitest";
+import fc from "fast-check";
 import {
   bandPairs,
   densityAlpha,
   FanChart,
   MAX_DRAWN_PATHS,
 } from "../src/render/fanchart";
-import { simulate, percentileBands } from "../src/sim/simulate";
+import { simulate, percentileBands, type PathSet } from "../src/sim/simulate";
 
 /** A 2D context that tallies the draw calls a render makes, DOM-free. */
 function recordingContext() {
@@ -175,5 +176,26 @@ describe("FanChart.render", () => {
     });
     // Fewer segments drawn when the sweep only reveals a quarter of the steps.
     expect(partial.calls.lineTo).toBeLessThan(full.calls.lineTo);
+  });
+
+  it("never strokes more than MAX_DRAWN_PATHS raw paths, at any path count", () => {
+    fc.assert(
+      fc.property(fc.integer({ min: 1, max: 6000 }), (count) => {
+        const flatPaths: PathSet = Array.from({ length: count }, () =>
+          Float64Array.from([0, 1, 2]),
+        );
+        const flatBands = {
+          percentiles: [0.5],
+          rows: [Float64Array.from([0, 1, 2])],
+        };
+        const ctx = recordingContext();
+        const chart = new FanChart(fakeCanvas(ctx));
+        chart.resize(100, 100, 1);
+        chart.render(flatPaths, flatBands, { domain: { min: -1, max: 3 } });
+        const rawStrokes = ctx.calls.stroke - 1; // minus the median line
+        expect(rawStrokes).toBeLessThanOrEqual(MAX_DRAWN_PATHS);
+        expect(rawStrokes).toBe(Math.min(count, MAX_DRAWN_PATHS));
+      }),
+    );
   });
 });
