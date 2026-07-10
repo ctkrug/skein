@@ -42,6 +42,25 @@ describe("Synth without WebAudio", () => {
   it("tolerates a null store entirely", () => {
     expect(() => new Synth(null).toggleMute()).not.toThrow();
   });
+
+  it("falls back to unmuted when even referencing localStorage throws", () => {
+    // Some sandboxed/private-browsing contexts throw just from accessing the
+    // global, before any getItem call, so the default-store probe must catch.
+    const descriptor = Object.getOwnPropertyDescriptor(globalThis, "localStorage");
+    Object.defineProperty(globalThis, "localStorage", {
+      configurable: true,
+      get(): never {
+        throw new Error("access denied");
+      },
+    });
+    try {
+      expect(() => new Synth().isMuted).not.toThrow();
+      expect(new Synth().isMuted).toBe(false);
+    } finally {
+      if (descriptor) Object.defineProperty(globalThis, "localStorage", descriptor);
+      else delete (globalThis as { localStorage?: unknown }).localStorage;
+    }
+  });
 });
 
 /** A fake WebAudio graph that counts the nodes a Synth wires up. */
