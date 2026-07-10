@@ -46,7 +46,10 @@ describe("Synth without WebAudio", () => {
   it("falls back to unmuted when even referencing localStorage throws", () => {
     // Some sandboxed/private-browsing contexts throw just from accessing the
     // global, before any getItem call, so the default-store probe must catch.
-    const descriptor = Object.getOwnPropertyDescriptor(globalThis, "localStorage");
+    const descriptor = Object.getOwnPropertyDescriptor(
+      globalThis,
+      "localStorage",
+    );
     Object.defineProperty(globalThis, "localStorage", {
       configurable: true,
       get(): never {
@@ -57,7 +60,8 @@ describe("Synth without WebAudio", () => {
       expect(() => new Synth().isMuted).not.toThrow();
       expect(new Synth().isMuted).toBe(false);
     } finally {
-      if (descriptor) Object.defineProperty(globalThis, "localStorage", descriptor);
+      if (descriptor)
+        Object.defineProperty(globalThis, "localStorage", descriptor);
       else delete (globalThis as { localStorage?: unknown }).localStorage;
     }
   });
@@ -73,10 +77,15 @@ function installFakeAudio() {
     exponentialRampToValueAtTime: () => {},
   });
   const node = () => ({ connect: (n: unknown) => n });
+  let lastInstance: FakeCtx | undefined;
+  const onCreate = (ctx: FakeCtx) => (lastInstance = ctx);
   class FakeCtx {
     currentTime = 0;
     sampleRate = 44100;
     destination = {};
+    constructor() {
+      onCreate(this);
+    }
     resume() {}
     createOscillator() {
       created.osc++;
@@ -108,7 +117,11 @@ function installFakeAudio() {
   const g = globalThis as unknown as { AudioContext?: unknown };
   const prev = g.AudioContext;
   g.AudioContext = FakeCtx as never;
-  return { created, restore: () => (g.AudioContext = prev) };
+  return {
+    created,
+    getCtx: () => lastInstance as unknown as { currentTime: number },
+    restore: () => (g.AudioContext = prev),
+  };
 }
 
 describe("Synth with WebAudio present", () => {
@@ -140,6 +153,43 @@ describe("Synth with WebAudio present", () => {
       expect(created.source).toBe(0);
     } finally {
       restore();
+    }
+  });
+
+  it("throttles blips inside the tick window but lets a later one through", () => {
+    const { created, getCtx, restore } = installFakeAudio();
+    try {
+      const s = new Synth(fakeStore());
+      s.resume();
+      const ctx = getCtx();
+      ctx.currentTime = 0.1;
+      s.blip();
+      expect(created.osc).toBe(1);
+      ctx.currentTime = 0.12; // 20ms later — inside the 45ms throttle window
+      s.blip();
+      expect(created.osc).toBe(1);
+      ctx.currentTime = 0.2; // past the window
+      s.blip();
+      expect(created.osc).toBe(2);
+    } finally {
+      restore();
+    }
+  });
+
+  it("swallows a throwing AudioContext constructor instead of crashing", () => {
+    const g = globalThis as unknown as { AudioContext?: unknown };
+    const prev = g.AudioContext;
+    g.AudioContext = class {
+      constructor() {
+        throw new Error("blocked by browser policy");
+      }
+    } as never;
+    try {
+      const s = new Synth(fakeStore());
+      expect(() => s.resume()).not.toThrow();
+      expect(() => s.blip()).not.toThrow();
+    } finally {
+      g.AudioContext = prev;
     }
   });
 });
