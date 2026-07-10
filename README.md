@@ -1,75 +1,82 @@
-# Scenario Loom
+# Skein
+
+**▶ Live demo — [apps.charliekrug.com/scenario-loom](https://apps.charliekrug.com/scenario-loom/)**
 
 [![CI](https://github.com/ctkrug/scenario-loom/actions/workflows/ci.yml/badge.svg)](https://github.com/ctkrug/scenario-loom/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-A domain-agnostic Monte Carlo sandbox in the browser. Set a mean, a variance, and a
-correlation with three sliders and watch thousands of simulated paths sweep across the
-screen live, tracing a fan chart that widens and narrows as you drag.
+Watch a thousand futures fan out live. Skein is a Monte Carlo sandbox in the browser:
+set a mean, a variance, and a correlation with three sliders and watch thousands of
+simulated paths sweep the screen, tracing a fan chart that widens and narrows as you drag.
 
-There's no dataset to load and no domain to pick. The same three sliders describe a
-project timeline slipping, a batting average regressing, or a stock return distributing —
-uncertainty is uncertainty, and Scenario Loom lets you feel its shape instead of reading it
-off a table.
+![A fan chart of 2,000 simulated paths: teal percentile bands under faint ink path threads, with a crimson median line.](docs/sample.svg)
 
-## Why
+There is no dataset to load and no domain to pick. The same three numbers describe a
+project timeline slipping, a batting average regressing, or a stock return spreading out.
+Uncertainty is uncertainty, and Skein lets you see its shape instead of reading it off a
+table of percentiles.
 
-Most Monte Carlo tools are bolted onto a specific domain (a finance calculator, a project
-risk tracker) and hide the simulation behind a report. Scenario Loom strips the simulation
-down to its three real parameters and makes the _output itself_ the interface: drag a
-slider, watch the cone of outcomes respond in under a second, 2,000 paths at a time.
+## Who it's for
 
-## The wow moment
+Anyone who has asked "how uncertain is this, really?" and wanted to poke at the
+assumptions instead of trusting one number: an engineer sanity-checking a project
+estimate, someone arguing about regression to the mean, a person who wants to see what
+"high variance" actually looks like. It assumes no statistics past "higher variance means
+less certain" and "correlation means today depends on yesterday."
 
-Drag the variance slider. 2,000 simulated paths resweep the canvas in under a second, and
-the fan chart's cone visibly widens or narrows live, in sync with your hand.
+## What it does
 
-## Features
+- **Three core sliders:** mean (drift), variance (spread), and correlation (how strongly
+  each step follows the last), plus a path-count slider from 50 to 5,000. Drag one and the
+  cone of outcomes resimulates and redraws in under a second, 2,000 paths at a time.
+- **A live fan chart:** 5/25/50/75/95 percentile bands drawn under the raw sample paths on
+  a device-pixel-ratio-aware canvas. The vertical frame holds steady as you drag variance,
+  so the cone visibly opens and closes instead of the whole view rescaling away.
+- **Domain presets:** volatile stock, slipping timeline, streaky shooter, coin-flip
+  baseline. Each reframes the same three sliders with new labels and starting values; the
+  simulation never branches on which one is active.
+- **Shareable and exportable:** the full scenario lives in the URL hash, so a link restores
+  it exactly. One click exports the current chart as a PNG.
+- **Built to feel good:** synthesized sound effects (WebAudio, no audio files) with a mute
+  toggle that persists, a masthead wordmark that sets itself letter by letter on load, and
+  a full `prefers-reduced-motion` pass.
 
-- Three core controls — mean (drift), variance (volatility), and correlation (how strongly
-  each step depends on the last) — plus a path-count slider from 50 to 5,000 paths.
-- A live fan chart: 5/25/50/75/95 percentile bands rendered under the raw sample paths on a
-  DPR-aware canvas, redrawn on every slider gesture. The y-frame stays steady so the cone
-  visibly opens and closes with variance instead of rescaling away.
-- Domain presets (volatile stock, slipping timeline, streaky shooter, coin-flip baseline)
-  that reframe the same three sliders with labels and starting values — the simulation never
-  branches on which one is active.
-- A shareable link (the scenario is encoded in the URL hash) and one-click PNG export of the
-  current chart.
-- Synth sound effects (WebAudio, no audio files) with a mute toggle that persists, a
-  staggered masthead wordmark, and a full `prefers-reduced-motion` pass.
-
-## Using it
+## Run it locally
 
 ```bash
 npm install
-npm run dev      # local dev server
-npm test         # simulation + framing + DOM-wiring tests
-npm run build    # static bundle in dist/ (serves from any subpath)
+npm run dev      # Vite dev server
+npm test         # simulation + framing + DOM-wiring tests (Vitest)
+npm run build    # static bundle in site/ (serves from any subpath)
+npm run sample   # regenerate docs/sample.svg from the live simulation
 ```
 
-Drag any slider and the cone resweeps live. Pick a preset to reframe the numbers for a
-different domain, tune from there, then share the URL or export a PNG.
+Drag any slider and the cone resweeps. Pick a preset to reframe the numbers for a different
+domain, tune from there, then share the URL or export a PNG.
+
+## How it works
+
+Each path is a discrete AR(1) process: `x[t] = mean + correlation * (x[t-1] - mean) + noise`,
+where `noise` is drawn from `Normal(0, variance)`. Those three numbers cover independent
+draws (correlation 0), slow mean-reverting swings (correlation near 1), and step-to-step
+oscillation (correlation near -1) without any domain-specific model. The simulation core in
+`src/sim/` is pure TypeScript with no DOM dependency, unit-tested for seeded reproducibility
+and statistical correctness. The renderer is a thin canvas consumer on top.
+
+See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for the module map,
+[`docs/VISION.md`](docs/VISION.md) for the design rationale, and
+[`docs/DESIGN.md`](docs/DESIGN.md) for the visual direction.
 
 ## Stack
 
 - **TypeScript** for the simulation core and UI logic.
-- **D3** (`d3-selection`, `d3-scale`, `d3-shape`, `d3-array`) for scales, axes, and path
-  generation; rendering itself targets `<canvas>` for the raw path volume, with D3 driving
-  the fan-chart overlay.
-- **Vite** for dev server + static production build.
-- **Vitest** for unit tests of the simulation math (mean/variance/correlation must be
-  statistically correct, not just fast).
-
-See [`docs/VISION.md`](docs/VISION.md) for the full design rationale and
-[`docs/BACKLOG.md`](docs/BACKLOG.md) for the build plan.
-
-## Status
-
-Core is functionally complete: the live fan chart, presets, sharing, export, and sound all
-work end to end. See [`docs/BACKLOG.md`](docs/BACKLOG.md) for remaining polish and
-[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for the module map.
+- **`d3-random`** for the seeded Gaussian noise source. Scales, percentile geometry, and
+  rendering are hand-rolled on `<canvas>` to draw thousands of strokes at 60fps.
+- **Vite** for the dev server and the static production build.
+- **Vitest** (with fast-check property tests) for the simulation math and DOM wiring.
 
 ## License
 
-MIT — see [`LICENSE`](LICENSE).
+MIT license. See [`LICENSE`](LICENSE).
+
+More of Charlie's projects → [apps.charliekrug.com](https://apps.charliekrug.com)
