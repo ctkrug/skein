@@ -359,9 +359,11 @@ export class App {
   private animateSweep(): void {
     cancelAnimationFrame(this.sweepRaf);
     const domain = this.currentDomain();
-    let start = 0;
+    let start = -1;
     const step = (ts: number) => {
-      if (!start) start = ts;
+      // A sentinel of 0 would misfire on a genuine ts=0 first frame, so use a
+      // value no real timestamp takes instead of a falsy check.
+      if (start < 0) start = ts;
       const t = Math.min(1, (ts - start) / SWEEP_MS);
       this.chart.render(this.paths, this.bands, {
         reveal: easeOutCubic(t),
