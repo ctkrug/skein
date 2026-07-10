@@ -111,7 +111,7 @@ export class App {
     const head = el("header", { class: "masthead" });
 
     const brand = el("div", { class: "masthead__brand" });
-    brand.appendChild(buildWordmark("Scenario Loom", this.reduced));
+    brand.appendChild(buildWordmark("Skein", this.reduced));
     brand.appendChild(
       el("p", {
         class: "strapline",

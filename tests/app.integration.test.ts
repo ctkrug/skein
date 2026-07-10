@@ -38,7 +38,8 @@ describe("App layout", () => {
   it("renders the masthead wordmark with a letter per character", () => {
     mount();
     const letters = document.querySelectorAll(".wordmark__letter");
-    expect(letters.length).toBe("Scenario Loom".length);
+    expect(letters.length).toBe("Skein".length);
+    expect([...letters].map((l) => l.textContent).join("")).toBe("Skein");
   });
 
   it("builds all four sliders and four preset buttons", () => {

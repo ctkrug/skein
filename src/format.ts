@@ -20,7 +20,7 @@ export function formatSigned(v: number): string {
 
 /**
  * A filesystem-safe PNG filename for an export, e.g.
- * `scenario-loom-volatile-stock.png`. Falls back to a generic slug when the
+ * `skein-volatile-stock.png`. Falls back to a generic slug when the
  * preset name is empty or all punctuation.
  */
 export function exportFilename(presetName: string): string {
@@ -28,5 +28,5 @@ export function exportFilename(presetName: string): string {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
-  return `scenario-loom-${slug || "scenario"}.png`;
+  return `skein-${slug || "scenario"}.png`;
 }
