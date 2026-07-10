@@ -49,7 +49,12 @@ export class Synth {
   /** Flips mute, persists it, and returns the new state. */
   toggleMute(): boolean {
     this.muted = !this.muted;
-    this.store?.setItem(MUTE_KEY, this.muted ? "1" : "0");
+    // Some private-browsing modes throw from setItem even though getItem works.
+    try {
+      this.store?.setItem(MUTE_KEY, this.muted ? "1" : "0");
+    } catch {
+      // unpersisted for this session; the in-memory toggle still applies
+    }
     return this.muted;
   }
 
