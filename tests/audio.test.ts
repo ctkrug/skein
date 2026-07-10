@@ -26,6 +26,18 @@ describe("Synth mute state", () => {
     expect(a.toggleMute()).toBe(true);
     expect(new Synth(store).isMuted).toBe(true);
   });
+
+  it("fails safe to unmuted for a corrupt or hand-edited stored value", () => {
+    expect(
+      new Synth(fakeStore({ "scenario-loom:muted": "true" })).isMuted,
+    ).toBe(false);
+    expect(new Synth(fakeStore({ "scenario-loom:muted": "" })).isMuted).toBe(
+      false,
+    );
+    expect(
+      new Synth(fakeStore({ "scenario-loom:muted": "yes please" })).isMuted,
+    ).toBe(false);
+  });
 });
 
 describe("Synth without WebAudio", () => {
