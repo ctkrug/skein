@@ -101,6 +101,24 @@ describe("FanChart.render", () => {
     expect(ctx.calls.stroke).toBe(paths.length + 1);
   });
 
+  it("throws when the canvas yields no 2D context", () => {
+    const canvas = {
+      width: 0,
+      height: 0,
+      style: {} as Record<string, string>,
+      getContext: () => null,
+    } as unknown as HTMLCanvasElement;
+    expect(() => new FanChart(canvas)).toThrow("2D canvas context unavailable");
+  });
+
+  it("falls back to a data-fitted domain when no explicit domain is given", () => {
+    const ctx = recordingContext();
+    const chart = new FanChart(fakeCanvas(ctx));
+    chart.resize(300, 150, 1);
+    expect(() => chart.render(paths, bands)).not.toThrow();
+    expect(ctx.calls.stroke).toBe(paths.length + 1);
+  });
+
   it("sizes the backing store to devicePixelRatio", () => {
     const ctx = recordingContext();
     const canvas = fakeCanvas(ctx);
