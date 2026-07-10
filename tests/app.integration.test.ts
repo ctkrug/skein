@@ -148,6 +148,17 @@ describe("App interaction", () => {
     }
   });
 
+  it("reseeds and redraws without changing the slider values", () => {
+    mount();
+    const mean = document.querySelector<HTMLInputElement>("#slider-mean")!;
+    const before = mean.value;
+    const reseedBtn = [
+      ...document.querySelectorAll<HTMLButtonElement>(".btn"),
+    ].find((b) => b.textContent === "Reseed paths")!;
+    expect(() => reseedBtn.click()).not.toThrow();
+    expect(mean.value).toBe(before);
+  });
+
   it("restores state from a URL hash on load", () => {
     document.body.innerHTML = '<div id="app"></div>';
     location.hash = "#m=42&v=250&c=-0.3&n=1500&p=streak";
@@ -171,6 +182,18 @@ describe("App interaction", () => {
       ...document.querySelectorAll<HTMLButtonElement>(".preset"),
     ].find((b) => b.textContent === "Volatile stock")!;
     expect(stock.classList.contains("preset--active")).toBe(false);
+  });
+
+  it("falls back to a window resize listener without ResizeObserver", () => {
+    const original = window.ResizeObserver;
+    // @ts-expect-error -- simulating an older browser with no ResizeObserver
+    delete window.ResizeObserver;
+    try {
+      expect(() => mount()).not.toThrow();
+      expect(() => window.dispatchEvent(new Event("resize"))).not.toThrow();
+    } finally {
+      window.ResizeObserver = original;
+    }
   });
 
   it("lights the preset when the hash values match it exactly", () => {
